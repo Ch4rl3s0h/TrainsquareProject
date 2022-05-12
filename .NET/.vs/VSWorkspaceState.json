@@ -2,9 +2,11 @@
   "ExpandedNodes": [
     "",
     "\\APIs",
+    "\\enums",
     "\\Models",
     "\\Services",
     "\\Services\\Interfaces"
   ],
+  "SelectedNode": "\\enums\\Entities.cs",
   "PreviewInSolutionExplorer": false
 }
