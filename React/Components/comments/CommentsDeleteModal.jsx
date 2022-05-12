@@ -8,7 +8,7 @@ import toastr from '../../utils/toastr';
 
 const _logger = debug.extend('CommentsDeleteModal');
 
-function DeleteComment(props) {
+function CommentsDeleteModal(props) {
     _logger(props);
 
     const [commentData, setCommentData] = useState({
@@ -82,7 +82,7 @@ function DeleteComment(props) {
     );
 }
 
-DeleteComment.propTypes = {
+CommentsDeleteModal.propTypes = {
     currentComment: PropTypes.shape({
         id: PropTypes.number.isRequired,
         subject: PropTypes.string,
@@ -94,4 +94,4 @@ DeleteComment.propTypes = {
     }),
 };
 
-export default DeleteComment;
+export default CommentsDeleteModal;

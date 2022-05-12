@@ -2,12 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import debug from 'sabio-debug';
 import CommentsUpdateModal from './CommentsUpdateModal';
-import CommentReplyModal from './CommentsReplyModal';
+import CommentsReplyModal from './CommentsReplyModal';
 import CommentsDeleteModal from '../comments/CommentsDeleteModal';
 
 const _logger = debug.extend('CommentTemplate');
 
-function Comment(props) {
+function CommentTemplate(props) {
     _logger(props, PropTypes);
     const aComment = props?.comment;
 
@@ -33,7 +33,7 @@ function Comment(props) {
                                 <CommentsUpdateModal currentComment={aComment}></CommentsUpdateModal>
                                 <CommentsDeleteModal currentComment={aComment}></CommentsDeleteModal>
                                 <div className="card-body mt-0 pb-0">
-                                    <CommentReplyModal currentComment={aComment}></CommentReplyModal>
+                                    <CommentsReplyModal currentComment={aComment}></CommentsReplyModal>
                                 </div>
                             </div>
                         </div>
@@ -43,7 +43,7 @@ function Comment(props) {
                 <div className="col-7">
                     {aComment.replies &&
                         aComment.replies.map((reply) => (
-                            <Comment comment={reply} key={'ListCommentReply' + reply.id}></Comment>
+                            <CommentTemplate comment={reply} key={'ListCommentReply' + reply.id}></CommentTemplate>
                         ))}
                 </div>
                 <div className="col"></div>
@@ -52,7 +52,7 @@ function Comment(props) {
     );
 }
 
-Comment.propTypes = {
+CommentTemplate.propTypes = {
     comment: PropTypes.shape({
         id: PropTypes.number.isRequired,
         subject: PropTypes.string,
@@ -78,4 +78,4 @@ Comment.propTypes = {
     setShowModal: PropTypes.func.isRequired,
 };
 
-export default Comment;
+export default CommentTemplate;

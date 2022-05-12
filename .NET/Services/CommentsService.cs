@@ -113,6 +113,10 @@ namespace Sabio.Services
                 int startingIndex = 0;
                 Comments comment = MapComments(reader, ref startingIndex);
 
+                if (totalCount == 0)
+                {
+                    totalCount = reader.GetSafeInt32(startingIndex++);
+                }
                 if (list == null)
                 {
                     list = new List<Comments>();
@@ -183,6 +187,10 @@ namespace Sabio.Services
             {
                 int startingIndex = 0;
                 Comments comment = MapComments(reader, ref startingIndex);
+                if (totalCount == 0)
+                {
+                    totalCount = reader.GetSafeInt32(startingIndex++);
+                }
                 if (list == null)
                 {
                     list = new List<Comments>();

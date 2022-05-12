@@ -16,14 +16,15 @@ const _logger = debug.extend('CommentsByEntity');
 
 function CommentsByEntity(props) {
     _logger(props);
-    const anEntity = props?.currentUsers;
+    const anEntity = props.entity;
+    const anEntityTypeId = props.entityTypeId;
     const [showModal, setShowModal] = useState(false);
     const [currentComment, setCurrentComment] = useState();
 
     const [commentsData, setCommentsData] = useState({
         subject: '',
         text: '',
-        parentId: '',
+        parentId: 0,
         entityTypeId: '',
         entityId: '',
         isDeleted: false,
@@ -41,14 +42,15 @@ function CommentsByEntity(props) {
 
     useEffect(() => {
         _logger('useEffect firing');
-        _logger(anEntity);
-        if (anEntity?.entityId) {
+        _logger(anEntity, anEntityTypeId);
+
+        if (anEntity?.id) {
             commentService
-                .getByEntity(anEntity?.entityId, anEntity.entityTypeId, pageData.pageIndex, pageData.pageSize)
+                .getByEntity(anEntity?.id, anEntityTypeId, pageData.pageIndex, pageData.pageSize)
                 .then(onRetrieveCommentsSuccess)
-                .catch(onRetrieveCommentsError);
+                .catch(ifNoCommentsYet);
         }
-    }, []);
+    }, [anEntity]);
 
     const mapComments = (aComment) => (
         <CommentTemplate
@@ -68,6 +70,8 @@ function CommentsByEntity(props) {
 
         setCommentsData((prevState) => {
             const commentsData = { ...prevState };
+            commentsData.entityId = anEntity.id;
+            commentsData.entityTypeId = anEntity.entityTypeId;
             commentsData.arrayOfComments = arrayOfComms;
             commentsData.commentComponents = arrayOfComms.map(mapComments);
             return commentsData;
@@ -96,11 +100,14 @@ function CommentsByEntity(props) {
         toastr.error('Error retrieving comments by Entity');
     };
 
+    const ifNoCommentsYet = (error) => {
+        _logger(error);
+    };
+
     const onPostClicked = (values) => {
         _logger('Values', values);
-        parseInt(values.parentId);
-        parseInt(values.entityTypeId);
-        parseInt(values.entityId);
+        values.entityId = anEntity?.id;
+        values.entityTypeId = anEntityTypeId;
         commentService.add(values).then(onAddCommentSuccess).catch(onAddCommentError);
     };
 
@@ -108,7 +115,7 @@ function CommentsByEntity(props) {
         _logger(response);
         toastr.success('Comment added successfully');
         commentService
-            .paginate(pageData.pageIndex, pageData.pageSize)
+            .getByEntity(anEntity?.id, anEntityTypeId, pageData.pageIndex, pageData.pageSize)
             .then(onRetrieveCommentsSuccess)
             .catch(onRetrieveCommentsError);
     };
@@ -195,10 +202,12 @@ function CommentsByEntity(props) {
 }
 
 CommentsByEntity.propTypes = {
-    currentUsers: PropTypes.shape({
-        entityId: PropTypes.number.isRequired,
-        entityTypeId: PropTypes.number.isRequired,
+    entity: PropTypes.shape({
+        id: PropTypes.number,
+        entityId: PropTypes.number,
+        entityTypeId: PropTypes.number,
     }),
+    entityTypeId: PropTypes.number,
 };
 
 export default CommentsByEntity;

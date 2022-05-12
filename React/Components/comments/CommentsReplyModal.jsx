@@ -10,14 +10,14 @@ import toastr from '../../utils/toastr';
 
 const _logger = debug.extend('CommentsUpdateModal');
 
-function UpdateComment(props) {
+function CommentReplyModal(props) {
     _logger(props);
 
     const [commentData, setCommentData] = useState({
         subject: '',
         text: '',
         parentId: '',
-        entityType: '',
+        entityTypeId: '9',
         entityId: '',
         isDeleted: false,
     });
@@ -27,16 +27,16 @@ function UpdateComment(props) {
     const handleShow = () => setShow(true);
 
     useEffect(() => {
-        _logger('Update Modal ->', props);
+        _logger('Reply Modal', props);
         setCommentInfo(props.currentComment);
     }, []);
 
     const setCommentInfo = (comments) => {
         const data = {
-            id: comments.id,
-            subject: comments.subject,
-            text: comments.text,
-            parentId: comments.parentId,
+            id: '',
+            subject: '',
+            text: '',
+            parentId: comments.id,
             entityTypeId: comments.entityType,
             entityId: comments.entityId,
             isDeleted: comments.isDeleted,
@@ -62,22 +62,22 @@ function UpdateComment(props) {
         });
     };
 
-    const onUpdateClicked = (evt) => {
+    const onAddReplyClicked = (evt) => {
         evt.preventDefault();
         _logger(commentData);
-        commentService.update(commentData).then(onUpdateCommentSuccess).catch(onUpdateCommentError);
+        commentService.add(commentData).then(onAddReplySuccess).catch(onAddReplyError);
     };
 
-    const onUpdateCommentSuccess = (response) => {
+    const onAddReplySuccess = (response) => {
         _logger(response);
         handleClose();
-        toastr.success('Comment successfully updated!');
+        toastr.success('Reply successfully added!');
         window.location.reload();
     };
 
-    const onUpdateCommentError = (error) => {
+    const onAddReplyError = (error) => {
         _logger(error);
-        toastr.error('Comment could not be updated');
+        toastr.error('Reply could not be added');
     };
 
     return (
@@ -85,12 +85,12 @@ function UpdateComment(props) {
             <Formik
                 enableReinitialize={true}
                 initialValues={commentData}
-                onSubmit={onUpdateClicked}
+                onSubmit={onAddReplyClicked}
                 validationSchema={commentsSchema}>
                 <Form>
                     <Modal show={show} onHide={handleClose} animation={false}>
                         <Modal.Header closeButton>
-                            <Modal.Title>Edit Comment</Modal.Title>
+                            <Modal.Title>Enter Reply</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
                             <label htmlFor="subject" className="form-label">
@@ -101,41 +101,33 @@ function UpdateComment(props) {
                                 className="form-control"
                                 id="subject"
                                 name="subject"
-                                value={commentData.subject}
                                 onChange={onFormChange}
                             />
                             <label htmlFor="text" className="form-label">
                                 Comment
                             </label>
-                            <Field
-                                type="text"
-                                className="form-control"
-                                id="text"
-                                name="text"
-                                value={commentData.text}
-                                onChange={onFormChange}
-                            />
+                            <Field type="text" className="form-control" id="text" name="text" onChange={onFormChange} />
                             <ErrorMessage name="text" component="div" className="has-error" />
                         </Modal.Body>
                         <Modal.Footer>
                             <Button variant="secondary" onClick={handleClose}>
                                 Close
                             </Button>
-                            <Button variant="primary" onClick={onUpdateClicked}>
-                                Save Changes
+                            <Button variant="primary" onClick={onAddReplyClicked}>
+                                Post Reply
                             </Button>
                         </Modal.Footer>
                     </Modal>
+                    <a role="button" variant="primary" className="card-link" onClick={handleShow}>
+                        Reply
+                    </a>
                 </Form>
             </Formik>
-            <Button variant="primary" className="btn-sm rounded-pill" onClick={handleShow}>
-                Edit
-            </Button>
         </React.Fragment>
     );
 }
 
-UpdateComment.propTypes = {
+CommentReplyModal.propTypes = {
     currentComment: PropTypes.shape({
         id: PropTypes.number.isRequired,
         subject: PropTypes.string,
@@ -147,4 +139,4 @@ UpdateComment.propTypes = {
     }),
 };
 
-export default UpdateComment;
+export default CommentReplyModal;
